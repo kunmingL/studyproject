@@ -2,14 +2,9 @@ package com.kunming.study.Lambda;
 
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
-import java.util.function.BiFunction;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.Predicate;
+import java.security.cert.X509Certificate;
+import java.util.*;
+import java.util.function.*;
 import java.util.stream.Collectors;
 
 import static java.util.Collections.sort;
@@ -24,6 +19,7 @@ public class LambdaTest {
         List<String> list = Arrays.asList("Hello", "World", "Lambda");
         Consumer<String> consumer = s -> System.out.println(s.toUpperCase());
         list.forEach(consumer);
+
 
         //**使用 Lambda 实现 Runnable**
         //- 使用 Lambda 表达式创建一个 `Runnable` 任务，并打印 `"Hello, Lambda!"`。
@@ -162,7 +158,93 @@ public class LambdaTest {
                     }
                 })
                 .forEach(System.out::println);
+
+
+        //**过滤出列表中的正数**
+        //- 给定一个整数列表 `List<Integer>`，使用 Stream API 过滤出所有正数。
+        //- 提示：使用 `filter`。
+        Arrays.asList(1,-1,5,-6,7,-9).stream().filter(x -> x>0).forEach(System.out::println);
+
+        //**将字符串列表转换为大写**
+        //- 给定一个字符串列表 `List<String>`，使用 Stream API 将每个字符串转换为大写。
+        //- 提示：使用 `map`。
+        System.out.println(Arrays.asList("kunming","zilin","changan").stream().map(x -> x.toUpperCase()).collect(Collectors.toList()));
+
+        //**计算列表中所有数的和**
+        //- 给定一个整数列表 `List<Integer>`，使用 Stream API 计算所有数的和。
+        //- 提示：使用 `reduce` 或 `sum`。
+        System.out.println(Arrays.asList(5,7,8).stream().reduce(0,Integer::sum));
+
+        //**去重**
+        //- 给定一个整数列表 `List<Integer>`，使用 Stream API 去重。
+        //- 提示：使用 `distinct`。
+        System.out.println(Arrays.asList(1,1,2,3,5,5).stream().distinct().collect(Collectors.toList()));
+
+        //**排序**
+        //- 给定一个字符串列表 `List<String>`，使用 Stream API 按字母顺序排序。
+        //- 提示：使用 `sorted`。
+        ArrayList<String> strings1 = new ArrayList<>(Arrays.asList("zilin","kunming"));
+        strings1.sort(String::compareTo);
+        System.out.println(strings1);
+
+
+        //**分组**
+        //- 给定一个 `Person` 对象列表，使用 Stream API 按年龄分组。
+        //- 提示：使用 `Collectors.groupingBy`。
+        List<Person> list3 = Arrays.asList(new Person("k", 18), new Person("z", 18), new Person("a", 6), new Person("l", 7));
+        Map<Integer, List<Person>> collect1 = list3.stream().collect(Collectors.groupingBy(p -> p.getAge()));
+        System.out.println(collect1);
+
+
+        //**统计**
+        //- 给定一个整数列表 `List<Integer>`，使用 Stream API 统计最大值、最小值和平均值。
+        //- 提示：使用 `Collectors.summarizingInt`。
+        ToIntFunction<? super Integer> mapper = new ToIntFunction<Integer>() {
+            @Override
+            public int applyAsInt(Integer value) {
+                return value;
+            }
+        };
+
+        IntSummaryStatistics collect2 = Arrays.asList(1, 10, 21, 52, 80).stream().collect(Collectors.summarizingInt(mapper));
+        System.out.println(collect2);
+
+
+        //**扁平化**
+        //- 给定一个嵌套列表 `List<List<Integer>>`，使用 Stream API 将其扁平化为一个单层列表。
+        //- 提示：使用 `flatMap`。
+        List<Integer> list4 = Arrays.asList(1, 5, 7, 8, 9, 10);
+        List<List<Integer>> list5 = new ArrayList<>();
+        list5.add(list4);
+
+        System.out.println(list5.stream().flatMap(x -> x.stream()).collect(Collectors.toList()));
+
+        //**并行流**
+        //- 给定一个整数列表 `List<Integer>`，使用并行流计算所有数的和。
+        //- 提示：使用 `parallelStream`。
+        System.out.println(list4.parallelStream().reduce(0,Integer::sum));
+
+        //**条件过滤**
+        //- 给定一个 `Person` 对象列表，使用 Stream API 过滤出年龄大于 18 岁且名字以 "A" 开头的人。
+        //- 提示：结合 `filter` 和多个条件。
+        System.out.println(Arrays.asList(new Person("akli",16),new Person("ALICE",19),new Person("kun",26))
+                .stream()
+                .filter(person -> {
+                 if (person.getName().startsWith("A")&& person.getAge() >=18){
+                     return true;
+                 }
+                 return false;
+                })
+                .collect(Collectors.toList()));
+        //优化
+        System.out.println(Arrays.asList(new Person("akli",16),new Person("ALICE",19),new Person("kun",26))
+                .stream()
+                .filter(person -> person.getName().startsWith("A")&& person.getAge() >=18)
+                .collect(Collectors.toList()));
     }
+
+
+
 
 
 
